@@ -1,9 +1,12 @@
 # Chip Eight
-A web based CHIP-8 interpreter.
+A web based CHIP-8 interpreter with disassembly tool.
 
 [Link to the website.](https://jamesscn.github.io/chipeight/)
 
 <img src="favicon.png" alt="logo" width=270/>
+
+**New:**
+I have added a new tool that lets you disassemble ROMs and display them in assembly code. It can be found in the tools folder and is written in C++ with an example disassembly of the tetris game. I am planning on making a compiler in the future so that custom ROMs can be programmed.
 
 **Features:**
 * Can load custom ROMs from a specified URL

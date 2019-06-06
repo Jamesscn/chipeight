@@ -563,7 +563,7 @@ function runCycle() {
                     break
                 case 0x0033:
                     /*
-                     * This esentially separates the value in Vx into the hundreds, tens and digits place for displaying scores
+                     * This essentially separates the value in Vx into the hundreds, tens and digits place for displaying scores
                      * 
                      * Instruction: 0xFx33
                      * Description: Stores the BCD representation of Vx in memory locations I, I+1, and I+2.
