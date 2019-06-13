@@ -6,20 +6,32 @@
 
 using namespace std;
 
-string hexToStr(int value) {
+string hexToStr(int value, bool prefix) {
     string result;
     if(value == 0) {
-        return "0";
+        result = "0";
     }
     while(value > 0) {
-        result += (value % 10 + 48);
-        value /= 10;
+        int digit = value & 0xF;
+        if(digit < 10) {
+            result += digit + 48;
+        } else {
+            result += digit + 'A' - 10;
+        }
+        value >>= 4;
+    }
+    if(prefix) {
+        result += "x0";
     }
     reverse(result.begin(), result.end());
     return result;
 }
 
-string getOpcode(int opcode) {
+string hexToStr(int value) {
+    return hexToStr(value, true);
+}
+
+string getInstruction(int opcode) {
     switch (opcode & 0xF000) {
         case 0x0000:
             if (opcode == 0x00E0) {
@@ -44,7 +56,7 @@ string getOpcode(int opcode) {
                  * Description: Jump to a machine code routine at nnn.
                  * Assembly code: SYS addr
                  */
-                return "sys*\t" + hexToStr(opcode & 0x0FFF);
+                return "sys\t" + hexToStr(opcode & 0x0FFF);
             }
             break;
         case 0x1000:
@@ -69,7 +81,7 @@ string getOpcode(int opcode) {
              * Description: Skips the next instruction if Vx = nn.
              * Assembly code: SE Vx, byte
              */
-            return "se\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", " + hexToStr(opcode & 0x00FF);
+            return "se\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", " + hexToStr(opcode & 0x00FF);
             break;
         case 0x4000:
             /*
@@ -77,7 +89,7 @@ string getOpcode(int opcode) {
              * Description: Skips the next instruction if Vx != nn.
              * Assembly code: SNE Vx, byte
              */
-            return "sne\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", " + hexToStr(opcode & 0x00FF);
+            return "sne\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", " + hexToStr(opcode & 0x00FF);
             break;
         case 0x5000:
             /*
@@ -86,9 +98,9 @@ string getOpcode(int opcode) {
              * Assembly code: SE Vx, Vy
              */
             if ((opcode & 0x000F) == 0x0000) {
-                return "se\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                return "se\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
             } else {
-                return "invalid";
+                return "null\t" + hexToStr(opcode); //Bad opcode
             }
             break;
         case 0x6000:
@@ -97,7 +109,7 @@ string getOpcode(int opcode) {
              * Description: Sets Vx = nn.
              * Assembly code: LD Vx, byte
              */
-            return "mov\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", " + hexToStr(opcode & 0x00FF);
+            return "mov\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", " + hexToStr(opcode & 0x00FF);
             break;
         case 0x7000:
             /*
@@ -105,7 +117,7 @@ string getOpcode(int opcode) {
              * Description: Sets Vx = Vx + nn.
              * Assembly code: ADD Vx, byte
              */
-            return "add\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", " + hexToStr(opcode & 0x00FF);
+            return "add\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", " + hexToStr(opcode & 0x00FF);
             break;
         case 0x8000:
             switch (opcode & 0x000F) {
@@ -115,7 +127,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx = Vy.
                      * Assembly code: LD Vx, Vy
                      */
-                    return "mov\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                    return "mov\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x0001:
                     /*
@@ -123,7 +135,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx |= Vy.
                      * Assembly code: OR Vx, Vy
                      */
-                    return "or\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                    return "or\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x0002:
                     /*
@@ -131,7 +143,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx &= Vy.
                      * Assembly code: AND Vx, Vy
                      */
-                    return "and\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                    return "and\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x0003:
                     /*
@@ -139,7 +151,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx ^= Vy.
                      * Assembly code: XOR Vx, Vy
                      */
-                    return "xor\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                    return "xor\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x0004:
                     /*
@@ -147,7 +159,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx += Vy and VF = carry bit.
                      * Assembly code: ADD Vx, Vy
                      */
-                    return "add\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                    return "add\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x0005:
                     /*
@@ -155,7 +167,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx -= Vy and VF = !borrow bit.
                      * Assembly code: SUB Vx, Vy
                      */
-                    return "sub\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                    return "sub\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x0006:
                     /*
@@ -166,7 +178,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx = Vx >> 1 and VF = least significant bit.
                      * Assembly code: SHR Vx {, Vx}
                      */
-                    return "shr\tV" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "shr\tV" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 case 0x0007:
                     /*
@@ -174,7 +186,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx = Vy - Vx, set VF = !borrow bit.
                      * Assembly code: SUBN Vx, Vy
                      */
-                    return "subn\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+                    return "subn\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x000E:
                     /*
@@ -185,10 +197,10 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx = Vx << 1 and VF = most significant bit.
                      * Assembly code: SHL Vx {, Vx}
                      */
-                    return "shl\tV" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "shl\tV" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 default:
-                    return "invalid";
+                    return "null\t" + hexToStr(opcode);
             }
             break;
         case 0x9000:
@@ -197,7 +209,7 @@ string getOpcode(int opcode) {
              * Description: Skips the next instruction if Vx != Vy.
              * Assembly code: SNE Vx, Vy
              */
-            return "sne\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4);
+            return "sne\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
             break;
         case 0xA000:
             /*
@@ -213,7 +225,7 @@ string getOpcode(int opcode) {
              * Description: Jumps to memory address nnn + V0.
              * Assembly code: JP V0, addr
              */
-            return "jmp\tV0+" + hexToStr(opcode & 0x0FFF);
+            return "jmp\tV0, " + hexToStr(opcode & 0x0FFF);
             break;
         case 0xC000:
             /*
@@ -221,7 +233,7 @@ string getOpcode(int opcode) {
              * Description: Sets Vx = a random byte AND nn.
              * Assembly code: RND Vx, byte
              */
-            return "rand\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", " + hexToStr(opcode & 0x00FF);
+            return "rand\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", " + hexToStr(opcode & 0x00FF);
             break;
         case 0xD000:
             /*
@@ -231,7 +243,7 @@ string getOpcode(int opcode) {
              * Description: Displays a sprite of height n and width 8 starting at memory location I at (Vx, Vy) on the screen, while setting VF = 1 if a lit pixel is found, or 0 if not.
              * Assembly code: DRW Vx, Vy, nibble
              */
-            return "draw\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", V" + hexToStr((opcode & 0x00F0) >> 4) + ", " + hexToStr(opcode & 0x000F);
+            return "draw\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false) + ", " + hexToStr(opcode & 0x000F);
             break;
         case 0xE000:
             if ((opcode & 0x00FF) == 0x009E) {
@@ -240,16 +252,16 @@ string getOpcode(int opcode) {
                  * Description: Skips the next instruction if the key with the index stored in Vx is pressed.
                  * Assembly code: SKP Vx
                  */
-                return "skip\tV" + hexToStr((opcode & 0x0F00) >> 8);
+                return "skip\tV" + hexToStr((opcode & 0x0F00) >> 8, false);
             } else if ((opcode & 0x00FF) == 0x00A1) {
                 /*
                  * Instruction: 0xExA1
                  * Description: Skips the next instruction if the key with the index stored in Vx is not pressed.
                  * Assembly code: SKNP Vx
                  */
-                return "sknp\tV" + hexToStr((opcode & 0x0F00) >> 8);
+                return "sknp\tV" + hexToStr((opcode & 0x0F00) >> 8, false);
             } else {
-                return "invalid";
+                return "null\t" + hexToStr(opcode);
             }
             break;
         case 0xF000:
@@ -260,7 +272,7 @@ string getOpcode(int opcode) {
                      * Description: Sets Vx = delay timer value.
                      * Assembly code: LD Vx, DT
                      */
-                    return "lea\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", DT";
+                    return "lea\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", DT";
                     break;
                 case 0x000A:
                     /*
@@ -268,7 +280,7 @@ string getOpcode(int opcode) {
                      * Description: Waits for a key press then stores the value of that key in Vx.
                      * Assembly code: LD Vx, K
                      */
-                    return "lea\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", K";
+                    return "lea\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", K";
                     break;
                 case 0x0015:
                     /*
@@ -276,7 +288,7 @@ string getOpcode(int opcode) {
                      * Description: Sets the delay timer = Vx.
                      * Assembly code: LD DT, Vx
                      */
-                    return "lea\tDT, V" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "lea\tDT, V" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 case 0x0018:
                     /*
@@ -284,7 +296,7 @@ string getOpcode(int opcode) {
                      * Description: Sets the sound timer = Vx.
                      * Assembly code: LD ST, Vx
                      */
-                    return "lea\tST, V" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "lea\tST, V" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 case 0x001E:
                     /*
@@ -294,7 +306,7 @@ string getOpcode(int opcode) {
                      * Description: Sets the index register I += Vx.
                      * Assembly code: ADD I, Vx
                      */
-                    return "add\tI, V" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "add\tI, V" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 case 0x0029:
                     /*
@@ -302,7 +314,7 @@ string getOpcode(int opcode) {
                      * Description: Sets I = the location of sprite for the digit Vx.
                      * Assembly code: LD F, Vx
                      */
-                    return "lea\tF, V" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "lea\tF, V" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 case 0x0033:
                     /*
@@ -312,7 +324,7 @@ string getOpcode(int opcode) {
                      * Description: Stores the BCD representation of Vx in memory locations I, I+1, and I+2.
                      * Assembly code: LD B, Vx
                      */
-                    return "lea\tB, V" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "lea\tB, V" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 case 0x0055:
                     /*
@@ -320,7 +332,7 @@ string getOpcode(int opcode) {
                      * Description: Store the registers from V0 to Vx in memory starting at location I.
                      * Assembly code: LD [I], Vx
                      */
-                    return "lea\t[I], V" + hexToStr((opcode & 0x0F00) >> 8);
+                    return "lea\t[I], V" + hexToStr((opcode & 0x0F00) >> 8, false);
                     break;
                 case 0x0065:
                     /*
@@ -328,43 +340,63 @@ string getOpcode(int opcode) {
                      * Description: Sets the registers from V0 to Vx to the values in memory starting at location I.
                      * Assembly code: LD Vx, [I]
                      */
-                    return "lea\tV" + hexToStr((opcode & 0x0F00) >> 8) + ", [I]";
+                    return "lea\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", [I]";
                     break;
                 default:
-                    return "invalid";
+                    return "null\t" + hexToStr(opcode);
             }
             break;
     }
-    return "invalid";
+    return "null\t" + hexToStr(opcode);
 }
 
 int main(int argc, char** argv) {
-    if(argc < 2 || argc > 2) {
-        cerr << "Syntax: " << argv[0] << " file.rom" << endl;
+    if(argc < 2 || argc > 3) {
+        cerr << "Syntax: " << argv[0] << " [-v] file.rom" << endl;
         exit(1);
     }
+    string fileName;
+    bool verbose = false;
+    if(argc == 3) {
+        if(argv[1][0] == '-') {
+            if(argv[1][1] == 'v') {
+                verbose = true;
+            }
+            fileName = argv[2];
+        } else {
+            if(argv[2][1] == 'v') {
+                verbose = true;
+            }
+            fileName = argv[1];
+        }
+    } else {
+        fileName = argv[1];
+    }
     ifstream romFile;
-    romFile.open(argv[1]);
+    romFile.open(fileName);
     string inputString;
     if(romFile.is_open()) {
         string content((istreambuf_iterator<char>(romFile)), (istreambuf_iterator<char>()));
         inputString = content;
     }
-    cout << "  DISASSEMBLY OF " << argv[1] << endl;
-    cout << "-----------------------------------------" << endl;
-    cout << "  ADDRESS\tINSTRUCTION" << endl;
+    if(verbose) {
+        cout << "  DISASSEMBLY OF " << fileName << endl;
+        cout << "-----------------------------------------" << endl;
+        cout << "  ADDRESS\tINSTRUCTION" << endl;
+    }
     int value = 0;
     int location = 512;
     for(int i = 0; i < inputString.size(); i++) {
         int hexVal = inputString[i] & 0xFF;
         value += hexVal;
-        //cout << setfill('0') << setw(2) << hex << hexVal;
         if(i % 2 == 1) {
-            string opcode = getOpcode(value);
-            cout << "0x" << setfill('0') << setw(4) << hex << location << " ";
-            cout << setfill(' ') << setw(4) << dec << location << " | ";
-            cout << "0x" << setfill('0') << setw(4) << hex << value << ": ";
-            cout << opcode << endl;
+            string instruction = getInstruction(value);
+            if(verbose) {
+                cout << "0x" << setfill('0') << setw(4) << hex << location << " ";
+                cout << setfill(' ') << setw(4) << dec << location << " | ";
+                cout << "0x" << setfill('0') << setw(4) << hex << value << ": ";
+            }
+            cout << instruction << endl;
             value = 0;
             location += 2;
         }

@@ -6,7 +6,9 @@ A web based CHIP-8 interpreter with disassembly tool.
 <img src="favicon.png" alt="logo" width=270/>
 
 **New:**
-I have added a new tool that lets you disassemble ROMs and display them in assembly code. It can be found in the tools folder and is written in C++ with an example disassembly of the tetris game. I am planning on making a compiler in the future so that custom ROMs can be programmed.
+I have added two tools that allow you to assemble and disassemble ROM files, if you would like to use them you must generate the binaries in the tools folder using a C++ compiler.
+
+I am also working on my own version of the popular game Flappy Bird for CHIP-8, my current progress is stored in the flappyrom files.
 
 **Features:**
 * Can load custom ROMs from a specified URL

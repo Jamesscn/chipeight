@@ -2,10 +2,23 @@ This is a preview of the disassembly of the tetris rom, I commented the first fe
 
 Note: due to the fact that some code is used for storing memory, not all of it is executable. Such values may appear as sys* or invalid.
 
+Variables:
+
+V0 = X
+V1 = Y
+V3 = random block
+V4 = random block
+V5 = timer
+V6 = random block
+V11 = number of blocks in current row
+V13 = temporary y
+V14 = temporary y - 1
+V15 = collision
+
   DISASSEMBLY OF ../roms/tetris.rom
 -----------------------------------------
   ADDRESS	INSTRUCTION
-0x0200  512 | 0xa2b4: lea	I, 692; gets the sprite at 692 [80] or [10000000], a single pixel
+0x0200  512 | 0xa2b4: lea	I, 692; gets the sprite at 692, the value is 80 or bin[10000000], a single pixel
 0x0202  514 | 0x23e6: call	998; sets V[0] = 25, V[10] = 0
 0x0204  516 | 0x22b6: call	694; sets V[1] = 31, V[2] = 7, V[5] = 16, V[7] = 5, V[8] = 6, V[9] = 4
 0x0206  518 | 0x7001: add	V0, 1; for loop that draws the bottom, it goes from V[0] = 25 to V[0] = 37, this is the x value and V[1] is the bottom (31)
@@ -19,22 +32,25 @@ Note: due to the fact that some code is used for storing memory, not all of it i
 0x0216  534 | 0x6025: mov	V0, 37; go to the right wall
 0x0218  536 | 0x3100: se	V1, 0; skip once the top is reached
 0x021a  538 | 0x120e: jmp	526; if not, repeat
-0x021c  540 | 0xc470: rand	V4, 112
-0x021e  542 | 0x4470: sne	V4, 112
+
+0x021c  540 | 0xc470: rand	V4, 112; 112 = 0x70 = bin[01110000], this stores a random multiple of 16 between 16 and 112 in V[4]
+0x021e  542 | 0x4470: sne	V4, 112; if the value is 112, it retries, so this actually gets a value between 16 and 96
 0x0220  544 | 0x121c: jmp	540
-0x0222  546 | 0xc303: rand	V3, 3
-0x0224  548 | 0x601e: mov	V0, 30
-0x0226  550 | 0x6103: mov	V1, 3
-0x0228  552 | 0x225c: call	604
-0x022a  554 | 0xf515: lea	DT, V5
-0x022c  556 | 0xd014: draw	V0, V1, 4
-0x022e  558 | 0x3f01: se	V15, 1
-0x0230  560 | 0x123c: jmp	572
-0x0232  562 | 0xd014: draw	V0, V1, 4
-0x0234  564 | 0x71ff: add	V1, 255
-0x0236  566 | 0xd014: draw	V0, V1, 4
-0x0238  568 | 0x2340: call	832
-0x023a  570 | 0x121c: jmp	540
+0x0222  546 | 0xc303: rand	V3, 3; 3 = 0x03 = bin[00000011], this stores a value between 0 and 3
+0x0224  548 | 0x601e: mov	V0, 30; x is 30 or middle
+0x0226  550 | 0x6103: mov	V1, 3; y is 3, initial height of the block
+0x0228  552 | 0x225c: call	604; chooses a piece
+
+0x022a  554 | 0xf515: lea	DT, V5; sets the delay timer to V5, originally 16
+0x022c  556 | 0xd014: draw	V0, V1, 4; draws a 4 high sprite at the x and y, most certainly block
+0x022e  558 | 0x3f01: se	V15, 1; skips if VF = 1, this is for a collision when the bottom is reached
+0x0230  560 | 0x123c: jmp	572; if the block is still in the air, go to 572
+0x0232  562 | 0xd014: draw	V0, V1, 4; removes the block
+0x0234  564 | 0x71ff: add	V1, 255; moves it one up
+0x0236  566 | 0xd014: draw	V0, V1, 4; draws it one block higher
+0x0238  568 | 0x2340: call	832; checks if the row is complete
+0x023a  570 | 0x121c: jmp	540; go back and choose a new block (the block has been placed)
+
 0x023c  572 | 0xe7a1: sknp	V7
 0x023e  574 | 0x2272: call	626
 0x0240  576 | 0xe8a1: sknp	V8
@@ -51,17 +67,19 @@ Note: due to the fact that some code is used for storing memory, not all of it i
 0x0256  598 | 0xd014: draw	V0, V1, 4
 0x0258  600 | 0x7101: add	V1, 1
 0x025a  602 | 0x122a: jmp	554
-0x025c  604 | 0xa2c4: lea	I, 708
-0x025e  606 | 0xf41e: add	I, V4
-0x0260  608 | 0x6600: mov	V6, 0
+------------CHOOSEPIECE-------------- ; Chooses a random tetris piece
+0x025c  604 | 0xa2c4: lea	I, 708; sets I to value at 708 0x40e0
+0x025e  606 | 0xf41e: add	I, V4; adds the random 16 to 96 value
+0x0260  608 | 0x6600: mov	V6, 0; V[6] = 0 if V[3] == 0
 0x0262  610 | 0x4301: sne	V3, 1
-0x0264  612 | 0x6604: mov	V6, 4
+0x0264  612 | 0x6604: mov	V6, 4; V[6] = 4 if V[3] == 1
 0x0266  614 | 0x4302: sne	V3, 2
-0x0268  616 | 0x6608: mov	V6, 8
+0x0268  616 | 0x6608: mov	V6, 8; V[6] = 8 if V[3] == 2
 0x026a  618 | 0x4303: sne	V3, 3
-0x026c  620 | 0x660c: mov	V6, 12
-0x026e  622 | 0xf61e: add	I, V6
+0x026c  620 | 0x660c: mov	V6, 12; V[6] = 12 if V[3] == 3; essentially V[6] = V[3] * 4
+0x026e  622 | 0xf61e: add	I, V6; adds V[3] * 4, I = 0x40e0 + rand(1, 6) * 16 + rand(0, 3)
 0x0270  624 | 0x00ee: ret
+
 0x0272  626 | 0xd014: draw	V0, V1, 4
 0x0274  628 | 0x70ff: add	V0, 255
 0x0276  630 | 0x2334: call	820
@@ -96,6 +114,7 @@ Note: due to the fact that some code is used for storing memory, not all of it i
 0x02b0  688 | 0x2334: call	820
 0x02b2  690 | 0x00ee: ret
 0x02b4  692 | 0x8000: mov	V0, V0
+-------------INITVARIABLES------------- ; Initializes the variables for game building
 0x02b6  694 | 0x6705: mov	V7, 5
 0x02b8  696 | 0x6806: mov	V8, 6
 0x02ba  698 | 0x6904: mov	V9, 4
@@ -103,6 +122,7 @@ Note: due to the fact that some code is used for storing memory, not all of it i
 0x02be  702 | 0x6510: mov	V5, 16
 0x02c0  704 | 0x6207: mov	V2, 7
 0x02c2  706 | 0x00ee: ret
+
 0x02c4  708 | 0x40e0: sne	V0, 224
 0x02c6  710 | 0x0000: sys*	0
 0x02c8  712 | 0x40c0: sne	V0, 192
@@ -165,53 +185,58 @@ Note: due to the fact that some code is used for storing memory, not all of it i
 0x033a  826 | 0x3600: se	V6, 0
 0x033c  828 | 0x1338: jmp	824
 0x033e  830 | 0x00ee: ret
-0x0340  832 | 0xa2b4: lea	I, 692
-0x0342  834 | 0x8c10: mov	V12, V1
+----------------ROWCOMPLETE--------------- ; Decides what to do if a row is complete
+0x0340  832 | 0xa2b4: lea	I, 692; single pixel stored in draw
+0x0342  834 | 0x8c10: mov	V12, V1; get the Y value in V12
 0x0344  836 | 0x3c1e: se	V12, 30
 0x0346  838 | 0x7c01: add	V12, 1
 0x0348  840 | 0x3c1e: se	V12, 30
 0x034a  842 | 0x7c01: add	V12, 1
 0x034c  844 | 0x3c1e: se	V12, 30
-0x034e  846 | 0x7c01: add	V12, 1
-0x0350  848 | 0x235e: call	862
-0x0352  850 | 0x4b0a: sne	V11, 10
-0x0354  852 | 0x2372: call	882
+0x034e  846 | 0x7c01: add	V12, 1; adds 3 to height or until 30 is reached
+0x0350  848 | 0x235e: call	862; checks if row 3 below is complete
+0x0352  850 | 0x4b0a: sne	V11, 10; v11 is now the amount of blocks in the row, if 10, the row is complete and must be deleted
+0x0354  852 | 0x2372: call	882; this is called if the row is 10 blocks and can be removed
 0x0356  854 | 0x91c0: sne	V1, V12
 0x0358  856 | 0x00ee: ret
+
 0x035a  858 | 0x7101: add	V1, 1
 0x035c  860 | 0x1350: jmp	848
-0x035e  862 | 0x601b: mov	V0, 27
-0x0360  864 | 0x6b00: mov	V11, 0
-0x0362  866 | 0xd011: draw	V0, V1, 1
-0x0364  868 | 0x3f00: se	V15, 0
-0x0366  870 | 0x7b01: add	V11, 1
-0x0368  872 | 0xd011: draw	V0, V1, 1
-0x036a  874 | 0x7001: add	V0, 1
-0x036c  876 | 0x3025: se	V0, 37
-0x036e  878 | 0x1362: jmp	866
+----------------ROWCOUNT------------------ ; Checks if a row is complete by counting
+0x035e  862 | 0x601b: mov	V0, 27; sets X to 27
+0x0360  864 | 0x6b00: mov	V11, 0; initializes V11 as 0
+0x0362  866 | 0xd011: draw	V0, V1, 1; draws a pixel
+0x0364  868 | 0x3f00: se	V15, 0; if collision, don't add
+0x0366  870 | 0x7b01: add	V11, 1; add 1 to V11 in case of collision
+0x0368  872 | 0xd011: draw	V0, V1, 1; resets the pixel to original value
+0x036a  874 | 0x7001: add	V0, 1; move x 1 right
+0x036c  876 | 0x3025: se	V0, 37; end when the right wall is reached
+0x036e  878 | 0x1362: jmp	866; repeat until the end is reached
 0x0370  880 | 0x00ee: ret
-0x0372  882 | 0x601b: mov	V0, 27
-0x0374  884 | 0xd011: draw	V0, V1, 1
-0x0376  886 | 0x7001: add	V0, 1
-0x0378  888 | 0x3025: se	V0, 37
-0x037a  890 | 0x1374: jmp	884
-0x037c  892 | 0x8e10: mov	V14, V1
-0x037e  894 | 0x8de0: mov	V13, V14
-0x0380  896 | 0x7eff: add	V14, 255
-0x0382  898 | 0x601b: mov	V0, 27
-0x0384  900 | 0x6b00: mov	V11, 0
-0x0386  902 | 0xd0e1: draw	V0, V14, 1
-0x0388  904 | 0x3f00: se	V15, 0
-0x038a  906 | 0x1390: jmp	912
-0x038c  908 | 0xd0e1: draw	V0, V14, 1
-0x038e  910 | 0x1394: jmp	916
-0x0390  912 | 0xd0d1: draw	V0, V13, 1
-0x0392  914 | 0x7b01: add	V11, 1
-0x0394  916 | 0x7001: add	V0, 1
-0x0396  918 | 0x3025: se	V0, 37
-0x0398  920 | 0x1386: jmp	902
-0x039a  922 | 0x4b00: sne	V11, 0
-0x039c  924 | 0x13a6: jmp	934
+
+---------------DELETEROW------------------ ; First deletes the redundant row, then moves the higher rows down
+0x0372  882 | 0x601b: mov	V0, 27; set X to 27
+0x0374  884 | 0xd011: draw	V0, V1, 1; remove the pixel there
+0x0376  886 | 0x7001: add	V0, 1; move the x one right
+0x0378  888 | 0x3025: se	V0, 37; skip once the row is replaced
+0x037a  890 | 0x1374: jmp	884; repeat if row not fully replaced
+0x037c  892 | 0x8e10: mov	V14, V1; stores the y in V14
+0x037e  894 | 0x8de0: mov	V13, V14; stores the y in V13
+0x0380  896 | 0x7eff: add	V14, 255; subtracts 1 from V14
+0x0382  898 | 0x601b: mov	V0, 27; set X to the left pixel
+0x0384  900 | 0x6b00: mov	V11, 0; set V11 to 0
+0x0386  902 | 0xd0e1: draw	V0, V14, 1; check pixel at y - 1
+0x0388  904 | 0x3f00: se	V15, 0; skip if the value is empty
+0x038a  906 | 0x1390: jmp	912; jump if there is a collision
+0x038c  908 | 0xd0e1: draw	V0, V14, 1; remove the check pixel
+0x038e  910 | 0x1394: jmp	916; jump if there was no collision
+0x0390  912 | 0xd0d1: draw	V0, V13, 1; moves the pixel one down
+0x0392  914 | 0x7b01: add	V11, 1; add 1 to row counter
+0x0394  916 | 0x7001: add	V0, 1; add 1 to x
+0x0396  918 | 0x3025: se	V0, 37; when x is at end; skip
+0x0398  920 | 0x1386: jmp	902; if not, move the next row down
+0x039a  922 | 0x4b00: sne	V11, 0; skips if the row above was empty
+0x039c  924 | 0x13a6: jmp	934, if not, move that one down
 0x039e  926 | 0x7dff: add	V13, 255
 0x03a0  928 | 0x7eff: add	V14, 255
 0x03a2  930 | 0x3d01: se	V13, 1
@@ -229,6 +254,8 @@ Note: due to the fact that some code is used for storing memory, not all of it i
 0x03ba  954 | 0x4502: sne	V5, 2
 0x03bc  956 | 0x6504: mov	V5, 4
 0x03be  958 | 0x00ee: ret
+
+-----------------------------------------
 0x03c0  960 | 0xa700: lea	I, 1792
 0x03c2  962 | 0xf255: lea	[I], V2
 0x03c4  964 | 0xa804: lea	I, 2052
@@ -248,7 +275,10 @@ Note: due to the fact that some code is used for storing memory, not all of it i
 0x03e0  992 | 0xf265: lea	V2, [I]
 0x03e2  994 | 0xa2b4: lea	I, 692
 0x03e4  996 | 0x00ee: ret
+
+---------------INITXY----------------- ; Sets the x and y needed for floor building
 0x03e6  998 | 0x6a00: mov	V10, 0
 0x03e8 1000 | 0x6019: mov	V0, 25
 0x03ea 1002 | 0x00ee: ret
+
 0x03ec 1004 | 0x3723: se	V7, 35
