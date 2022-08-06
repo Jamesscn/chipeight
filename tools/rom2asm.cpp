@@ -1,8 +1,9 @@
+#include <algorithm>
+#include <iterator>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <string>
-#include <algorithm>
 
 using namespace std;
 
@@ -178,7 +179,7 @@ string getInstruction(int opcode) {
                      * Description: Sets Vx = Vx >> 1 and VF = least significant bit.
                      * Assembly code: SHR Vx {, Vx}
                      */
-                    return "shr\tV" + hexToStr((opcode & 0x0F00) >> 8, false);
+                    return "shr\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 case 0x0007:
                     /*
@@ -197,19 +198,23 @@ string getInstruction(int opcode) {
                      * Description: Sets Vx = Vx << 1 and VF = most significant bit.
                      * Assembly code: SHL Vx {, Vx}
                      */
-                    return "shl\tV" + hexToStr((opcode & 0x0F00) >> 8, false);
+                    return "shl\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
                     break;
                 default:
                     return "null\t" + hexToStr(opcode);
             }
             break;
         case 0x9000:
-            /*
-             * Instruction: 0x9xy0
-             * Description: Skips the next instruction if Vx != Vy.
-             * Assembly code: SNE Vx, Vy
-             */
-            return "sne\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
+            if ((opcode & 0x000F) == 0x0000) {
+                /*
+                * Instruction: 0x9xy0
+                * Description: Skips the next instruction if Vx != Vy.
+                * Assembly code: SNE Vx, Vy
+                */
+                return "sne\tV" + hexToStr((opcode & 0x0F00) >> 8, false) + ", V" + hexToStr((opcode & 0x00F0) >> 4, false);
+            } else {
+                return "null\t" + hexToStr(opcode);
+            }
             break;
         case 0xA000:
             /*
@@ -350,44 +355,18 @@ string getInstruction(int opcode) {
     return "null\t" + hexToStr(opcode);
 }
 
-int main(int argc, char** argv) {
-    if(argc < 2 || argc > 3) {
-        cerr << "Syntax: " << argv[0] << " [-v] file.rom" << endl;
-        exit(1);
-    }
-    string fileName;
-    bool verbose = false;
-    if(argc == 3) {
-        if(argv[1][0] == '-') {
-            if(argv[1][1] == 'v') {
-                verbose = true;
-            }
-            fileName = argv[2];
-        } else {
-            if(argv[2][1] == 'v') {
-                verbose = true;
-            }
-            fileName = argv[1];
-        }
-    } else {
-        fileName = argv[1];
-    }
-    ifstream romFile;
-    romFile.open(fileName);
-    string inputString;
-    if(romFile.is_open()) {
-        string content((istreambuf_iterator<char>(romFile)), (istreambuf_iterator<char>()));
-        inputString = content;
-    }
+bool verbose = false;
+
+void parseRom(string rom) {
     if(verbose) {
-        cout << "  DISASSEMBLY OF " << fileName << endl;
+        cout << "  DISASSEMBLED ROM" << endl;
         cout << "-----------------------------------------" << endl;
         cout << "  ADDRESS\tINSTRUCTION" << endl;
     }
     int value = 0;
     int location = 512;
-    for(int i = 0; i < inputString.size(); i++) {
-        int hexVal = inputString[i] & 0xFF;
+    for(int i = 0; i < rom.size(); i++) {
+        int hexVal = rom[i] & 0xFF;
         value += hexVal;
         if(i % 2 == 1) {
             string instruction = getInstruction(value);
@@ -402,4 +381,39 @@ int main(int argc, char** argv) {
         }
         value *= 256;
     }
+}
+
+int main(int argc, char** argv) {
+    string filename = "";
+    for(int i = 1; i < argc; i++) {
+        string param = argv[i];
+        if(param.find("-v") != string::npos) {
+            verbose = true;
+        } else if (filename == "") {
+            filename = param;
+        } else {
+            cerr << "Syntax: " << argv[0] << " [-v] file.rom" << endl;
+            exit(1);
+        }
+    }
+    if(filename == "") {
+        noskipws(cin);
+        istream_iterator<char> it(cin);
+        istream_iterator<char> end;
+        string rom(it, end);
+        parseRom(rom);
+    } else {
+        ifstream romFile(filename);
+        if(romFile.is_open()) {
+            noskipws(romFile);
+            istream_iterator<char> it(romFile);
+            istream_iterator<char> end;
+            string rom(it, end);
+            parseRom(rom);
+            romFile.close();
+        } else {
+            cerr << "The file " << filename << " could not be read!" << endl;
+            exit(1);
+        }
+    }    
 }

@@ -94,19 +94,11 @@ int getOpcode(vector<string> tokens) {
     } else if (tokens[0] == "sub") {
         return 0x8005 | charToHex(tokens[1][1]) << 8 | charToHex(tokens[2][1]) << 4;
     } else if (tokens[0] == "shr") {
-        if(tokens.size() == 2) {
-            return 0x8006 | charToHex(tokens[1][1]) << 8 | charToHex(tokens[1][1]) << 4;
-        } else {
-            return 0x8006 | charToHex(tokens[1][1]) << 8 | charToHex(tokens[2][1]) << 4;
-        }
+        return 0x8006 | charToHex(tokens[1][1]) << 8 | charToHex(tokens[2][1]) << 4;
     } else if (tokens[0] == "subn") {
         return 0x8007 | charToHex(tokens[1][1]) << 8 | charToHex(tokens[2][1]) << 4;
     } else if (tokens[0] == "shl") {
-        if(tokens.size() == 2) {
-            return 0x800E | charToHex(tokens[1][1]) << 8 | charToHex(tokens[1][1]) << 4;
-        } else {
-            return 0x800E | charToHex(tokens[1][1]) << 8 | charToHex(tokens[2][1]) << 4;
-        }
+        return 0x800E | charToHex(tokens[1][1]) << 8 | charToHex(tokens[2][1]) << 4;
     } else if (tokens[0] == "rand" || tokens[0] == "rnd") {
         return 0xC000 | charToHex(tokens[1][1]) << 8 | stringToHex(tokens[2]);
     } else if (tokens[0] == "draw" || tokens[0] == "drw") {
@@ -120,38 +112,48 @@ int getOpcode(vector<string> tokens) {
     }
 }
 
-int main(int argc, char** argv) {
-    if(argc < 2 || argc > 2) {
-        cerr << "Syntax: " << argv[0] << " file.rom" << endl;
-        exit(1);
-    }
-    ifstream asmFile;
-    asmFile.open(argv[1]);
-    if(asmFile.is_open()) {
-        string line;
-        while (getline(asmFile, line)){
-            vector<string> tokens;
-            string current = "";
-            for(int i = 0; i < line.length(); i++) {
-                if(line[i] == ' ' || line[i] == ',' || line[i] == '\t') {
-                    if(current.length() > 0) {
-                        tokens.push_back(current);
-                        current = "";
-                    }
-                } else {
-                    if(line[i] >= 'A' && line[i] <= 'Z') {
-                        current += line[i] + ' ';
-                    } else {
-                        current += line[i];
-                    }
-                }
+void parseLine(string line) {
+    vector<string> tokens;
+    string current = "";
+    for(int i = 0; i < line.length(); i++) {
+        if(line[i] == ' ' || line[i] == ',' || line[i] == '\t') {
+            if(current.length() > 0) {
+                tokens.push_back(current);
+                current = "";
             }
-            tokens.push_back(current);
-            int opcode = getOpcode(tokens);
-            char a = opcode & 0xFF;
-            char b = (opcode >> 8) & 0xFF;
-            cout << b << a;
+        } else {
+            if(line[i] >= 'A' && line[i] <= 'Z') {
+                current += line[i] + ' ';
+            } else {
+                current += line[i];
+            }
         }
-        asmFile.close();
+    }
+    tokens.push_back(current);
+    int opcode = getOpcode(tokens);
+    char a = opcode & 0xFF;
+    char b = (opcode >> 8) & 0xFF;
+    cout << b << a;
+}
+
+int main(int argc, char** argv) {
+    if(argc < 2) {
+        string line;
+        while (getline(cin, line)){
+            parseLine(line);
+        }
+    } else if (argc == 2) {
+        ifstream asmFile;
+        asmFile.open(argv[1]);
+        if(asmFile.is_open()) {
+            string line;
+            while (getline(asmFile, line)){
+                parseLine(line);
+            }
+            asmFile.close();
+        }
+    } else {
+        cerr << "Syntax: " << argv[0] << " file.asm" << endl;
+        exit(1);
     }
 }
