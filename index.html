@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<http>
+<html>
     <head>
         <meta charset="UTF-8">
         <link rel="icon" href="favicon.png">
@@ -15,39 +15,35 @@
                     <canvas id="chip" width="640" height="320"></canvas>
                 </div>
                 <div>
-                    <h1 id="name">Chip Eight</h1><br />
-                    <p id="info">Chip Eight is an interpreter designed to read code from the classic CHIP-8 language, making it possible to play games from the 70s. Select a ROM from the list below to play it or choose a custom game from another location.<br /><br />This interpreter is open-source and can be viewed as a <a href="https://github.com/jamesscn/chipeight">Github repository.</a></p>
-                </div>
-                <div id="expandSettings">
-                    <br />
-                    <button id="showSettings">Settings</button>
-                </div>
-                <form id="settings">
-                    <div id="buttons">
-                        <br />
-                        <button id="btn0">1</button>
-                        <button id="btn1">2</button>
-                        <button id="btn2">3</button>
-                        <button id="btn3">4</button><br />
-                        <button id="btn4">Q</button>
-                        <button id="btn5">W</button>
-                        <button id="btn6">E</button>
-                        <button id="btn7">R</button><br />
-                        <button id="btn8">A</button>
-                        <button id="btn9">S</button>
-                        <button id="btn10">D</button>
-                        <button id="btn11">F</button><br />
-                        <button id="btn12">Z</button>
-                        <button id="btn13">X</button>
-                        <button id="btn14">C</button>
-                        <button id="btn15">V</button><br />
-                    </div>
+                    <h1 id="name">Chip Eight</h1><br>
+                    <p id="info">Chip Eight is an interpreter designed to read code from the classic CHIP-8 language, making it possible to play games from the 70s. Select a ROM from the list below to play it or choose a custom game from another location.<br><br>This interpreter is open-source and can be viewed as a <a href="https://github.com/jamesscn/chipeight">Github repository.</a></p>
+                    <form id="settings">
+                        <div id="buttons">
+                            <br>
+                            <button id="btn0">1</button>
+                            <button id="btn1">2</button>
+                            <button id="btn2">3</button>
+                            <button id="btn3">4</button><br>
+                            <button id="btn4">Q</button>
+                            <button id="btn5">W</button>
+                            <button id="btn6">E</button>
+                            <button id="btn7">R</button><br>
+                            <button id="btn8">A</button>
+                            <button id="btn9">S</button>
+                            <button id="btn10">D</button>
+                            <button id="btn11">F</button><br>
+                            <button id="btn12">Z</button>
+                            <button id="btn13">X</button>
+                            <button id="btn14">C</button>
+                            <button id="btn15">V</button><br>
+                        </div>
+                    </form>
+                    <br>
                     <div>
-                        <br />
-                        <p>Background: <input class="jscolor" value="000000" id="background"></p><br />
+                        <p>Background: <input class="jscolor" value="000000" id="background"></p><br>
                         <p>Foreground: <input class="jscolor" value="FFFFFF" id="foreground"></p>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
         <div id="games">
@@ -55,63 +51,63 @@
                 <div class="tiles">
                     <div class="tile" id="pong2">
                         <h4>Pong</h4>
-                        <img src="thumbnails/pong.png" alt="<p>A table tennis style game meant to be played by two people where both players must deflect the ball towards their contenders area.<br /><br />Player 1: Q to go down and 2 to go up<br />Player 2: Z to go down and X to go up</p>" />
+                        <img src="thumbnails/pong.png" alt="<p>A table tennis style game meant to be played by two people where both players must deflect the ball towards their contenders area.<br><br>Player 1: Q to go down and 2 to go up<br>Player 2: Z to go down and X to go up</p>" />
                     </div>
                     <div class="tile" id="tetris">
                         <h4>Tetris</h4>
-                        <img src="thumbnails/tetris.png" alt="<p>You must stop the tiles from piling up by orienting them correctly, if an entire row is filled, that row will disappear and you will gain points. Be careful though, once the pile reaches the top, it's game over.<br /><br />Controls: W moves a tile left, E moves a tile right, Q rotates the current tile and R makes the tile fall faster</p>" />
+                        <img src="thumbnails/tetris.png" alt="<p>You must stop the tiles from piling up by orienting them correctly, if an entire row is filled, that row will disappear and you will gain points. Be careful though, once the pile reaches the top, it's game over.<br><br>Controls: W moves a tile left, E moves a tile right, Q rotates the current tile and R makes the tile fall faster</p>" />
                     </div>
                     <div class="tile" id="invaders">
                         <h4>Space Invaders</h4>
-                        <img src="thumbnails/invaders.png" alt="<p>You must defend the earth from alien overlords by shooting down their space ships. If they reach the ground, all life on earth will be destroyed.<br /><br />Press W to start the game.<br />Controls: Q goes left, E goes right and W shoots a laser beam.</p>" />
+                        <img src="thumbnails/invaders.png" alt="<p>You must defend the earth from alien overlords by shooting down their space ships. If they reach the ground, all life on earth will be destroyed.<br><br>Press W to start the game.<br>Controls: Q goes left, E goes right and W shoots a laser beam.</p>" />
                     </div>
                     <div class="tile" id="brix">
                         <h4>Brix</h4>
-                        <img src="thumbnails/brix.png" alt="<p>You must deflect a ball towards the bricks in front of you, destroy each brick until none remain.<br /><br />Controls: Q goes left and E goes right</p>" />
+                        <img src="thumbnails/brix.png" alt="<p>You must deflect a ball towards the bricks in front of you, destroy each brick until none remain.<br><br>Controls: Q goes left and E goes right</p>" />
                     </div>
                     <div class="tile" id="cave">
                         <h4>Cave</h4>
-                        <img src="thumbnails/cave.png" alt="<p>You must find the exit of a cave, but try not to touch the walls.<br /><br />Press V to start the game.</br>Controls: E goes right, Q goes left, A goes down and 3 goes up.</p>" />
+                        <img src="thumbnails/cave.png" alt="<p>You must find the exit of a cave, but try not to touch the walls.<br><br>Press V to start the game.</br>Controls: E goes right, Q goes left, A goes down and 3 goes up.</p>" />
                     </div>
                     <div class="tile" id="merlin">
                         <h4>Merlin</h4>
-                        <img src="thumbnails/merlin.png" alt="<p>Test out your memory with this game. Can you remember which tiles blinked in what order?<br /><br />Controls: Top left is Q, top right is W, bottom left is R and bottom right is A</p>" />
+                        <img src="thumbnails/merlin.png" alt="<p>Test out your memory with this game. Can you remember which tiles blinked in what order?<br><br>Controls: Top left is Q, top right is W, bottom left is R and bottom right is A</p>" />
                     </div>
                     <div class="tile" id="ufo">
                         <h4>UFO</h4>
-                        <img src="thumbnails/ufo.png" alt="<p>Shoot the objects above you to gain points, but try not to waste all of your shots.<br /><br />Controls: Q shoots left and upwards, W shoots only upwards and E shoots right and upwards</p>" />
+                        <img src="thumbnails/ufo.png" alt="<p>Shoot the objects above you to gain points, but try not to waste all of your shots.<br><br>Controls: Q shoots left and upwards, W shoots only upwards and E shoots right and upwards</p>" />
                     </div>
                     <div class="tile" id="airplane">
                         <h4>Airplane</h4>
-                        <img src="thumbnails/airplane.png" alt="<p>Gain points by launching bombs at the ground. Try not to hit any other airplanes.<br /><br />Controls: Press A to release a bomb</p>" />
+                        <img src="thumbnails/airplane.png" alt="<p>Gain points by launching bombs at the ground. Try not to hit any other airplanes.<br><br>Controls: Press A to release a bomb</p>" />
                     </div>
                     <div class="tile" id="worm">
                         <h4>Worm</h4>
-                        <img src="thumbnails/worm.png" alt="<p>Grow as large as possible by eating apples, but make sure not to bump into any walls or yourself.<br /><br />Controls: E goes right, Q goes left, A goes down and 3 goes up</p>" />
+                        <img src="thumbnails/worm.png" alt="<p>Grow as large as possible by eating apples, but make sure not to bump into any walls or yourself.<br><br>Controls: E goes right, Q goes left, A goes down and 3 goes up</p>" />
                     </div>
                     <div class="tile" id="hidden">
                         <h4>Hidden</h4>
-                        <img src="thumbnails/hidden.png" alt="<p>You must pick two cards from a grid and form pairs until all of the cards have been flipped over.<br /><br />Press W to start the game.<br />Controls: Q goes left, E goes right, A goes down, 3 goes up and W flips a card</p>" />
+                        <img src="thumbnails/hidden.png" alt="<p>You must pick two cards from a grid and form pairs until all of the cards have been flipped over.<br><br>Press W to start the game.<br>Controls: Q goes left, E goes right, A goes down, 3 goes up and W flips a card</p>" />
                     </div>
                     <div class="tile" id="missile">
                         <h4>Missile</h4>
-                        <img src="thumbnails/missile.png" alt="<p>Your objective is to shoot a missile at the flying objects, taking in mind that there are a limited number of missiles and that every time you shoot one things speed up.<br /><br />Controls: A launches a missile</p>" />
+                        <img src="thumbnails/missile.png" alt="<p>Your objective is to shoot a missile at the flying objects, taking in mind that there are a limited number of missiles and that every time you shoot one things speed up.<br><br>Controls: A launches a missile</p>" />
                     </div>
                     <div class="tile" id="puzzle">
                         <h4>Puzzle</h4>
-                        <img src="thumbnails/puzzle.png" alt="<p>You must rearrange the tiles so that they are in order by swapping the position of only one tile at a time.<br />Note: The tiles take a while to shuffle until you can finally start playing.<br /><br />Controls: E moves the tile on the left rightward, Q moves the tile on the right leftward, A moves the tile below up and 3 moves the tile above down</p>" />
+                        <img src="thumbnails/puzzle.png" alt="<p>You must rearrange the tiles so that they are in order by swapping the position of only one tile at a time.<br>Note: The tiles take a while to shuffle until you can finally start playing.<br><br>Controls: E moves the tile on the left rightward, Q moves the tile on the right leftward, A moves the tile below up and 3 moves the tile above down</p>" />
                     </div>
                     <div class="tile" id="wall">
                         <h4>Wall</h4>
-                        <img src="thumbnails/wall.png" alt="<p>You must move the wall and allow the ball to escape in order to gain points, if the ball hits the wall, you lose a point.<br /><br />Controls: Q moves the wall down and 2 moves it up</p>" />
+                        <img src="thumbnails/wall.png" alt="<p>You must move the wall and allow the ball to escape in order to gain points, if the ball hits the wall, you lose a point.<br><br>Controls: Q moves the wall down and 2 moves it up</p>" />
                     </div>
                     <div class="tile" id="tank">
                         <h4>Tank</h4>
-                        <img src="thumbnails/tank.png" alt="<p>You are driving a tank and must shoot the mines. Try not to touch them.<br /><br />Controls: E goes right, Q goes left, A goes up, 3 goes down and W shoots</p>" />
+                        <img src="thumbnails/tank.png" alt="<p>You are driving a tank and must shoot the mines. Try not to touch them.<br><br>Controls: E goes right, Q goes left, A goes up, 3 goes down and W shoots</p>" />
                     </div>
                     <div class="tile" id="vbrix">
                         <h4>VBrix</h4>
-                        <img src="thumbnails/vbrix.png" alt="<p>You must break the wall by deflecting balls onto it.<br /><br />Controls: Q goes down and 2 goes up</p>" />
+                        <img src="thumbnails/vbrix.png" alt="<p>You must break the wall by deflecting balls onto it.<br><br>Controls: Q goes down and 2 goes up</p>" />
                     </div>
                     <div class="tile" id="kaleid">
                         <h4>Kaleid</h4>
@@ -125,10 +121,10 @@
                         <h4>Custom</h4>
                         <img src="thumbnails/custom.png" alt="<p>You are now running a custom ROM.</p>" />
                     </div>
-                </div><br />
+                </div><br>
                 <p>ROMs created by David Winter, Christian Egeberg, Paul Vervalin, Roger Ivie, Roy Trevino, Paul Robson, Revival Studios and many others (these are all the names I could find). Website and interpreter built by Jamesscn.</p>
             </div>
         </div>
         <script src="index.js"></script>
     </body>
-</http>
+</html>

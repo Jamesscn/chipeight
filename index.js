@@ -690,20 +690,6 @@ window.onload = function () {
         }
     }
     /*
-     * Handles the settings button animations and values
-     */
-    settings.style.transition = "all ease 1s"
-    settings.style.webkitTransition = "all ease 1s"
-    var expandSettings = document.getElementById("showSettings")
-    expandSettings.onclick = function () {
-        var settings = document.getElementById("settings")
-        if (settings.classList.contains("expand")) {
-            settings.classList.remove("expand")
-        } else {
-            settings.classList.add("expand")
-        }
-    }
-    /*
      * Handles when the user decides to change colours and keybindings
      */
     var bg = document.getElementById("background")

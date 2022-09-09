@@ -1,7 +1,7 @@
 :root {
-    --tiles: #ff9b71;
-    --light-bg: #9da3a4;
-    --dark-bg: #2d3047;
+    --tiles: #7ecc00;
+    --light-bg: #e3e9e7;
+    --dark-bg: #a5318c;
 }
 
 body, div, canvas, h1, h4, img, a, p, button {
@@ -11,6 +11,10 @@ body, div, canvas, h1, h4, img, a, p, button {
 
 h1, h4 {
     font-family: "Montserrat", sans-serif;
+}
+
+h1 {
+    color: rgb(0, 0, 0);
 }
 
 p, button {
@@ -23,20 +27,26 @@ body {
 
 button {
     height: 3em;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-radius: 5px;
-    background-color: rgb(200, 200, 200);
+    border-radius: 8px;
+    border: 1px solid rgb(72, 72, 72);
+    background-color: rgb(255, 238, 0);
+    box-shadow: 2px 2px 2px rgb(72, 72, 72);
     color: black;
+}
+
+button:hover {
+    background-color: rgb(255, 247, 137);
+}
+
+button:active {
+    box-shadow: 0px 0px 2px rgb(72, 72, 72);
 }
 
 .wrapper {
     padding-top: 50px;
-    padding-bottom: 50px;
-    padding-left: 10%;
-    padding-right: 10%;
+    padding-bottom: 20px;
+    padding-left: 8%;
+    padding-right: 8%;
 }
 
 .tiles {
@@ -79,10 +89,6 @@ button {
 #content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-}
-
-#content h1 {
-    color: var(--dark-bg);
 }
 
 #content a, #content a:visited {
@@ -131,33 +137,19 @@ button {
     color: rgb(45, 255, 114);
 }
 
-#expandSettings {
-    grid-column: 1/3;
-}
-
 #settings {
     display: flex;
     grid-column: 1/3;
-    opacity: 0;
-    max-height: 0;
-    z-index: -1;
-}
-
-#settings.expand {
-    opacity: 1;
-    max-height: 20em;
-    z-index: 0;
 }
 
 #buttons button {
-    width: 100px;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
+    font-size: 14px;
 }
 
 #buttons button.setting {
     background-color: rgb(230, 230, 230);
     color: rgb(230, 230, 230);
-}
-
-#buttons {
-    margin-right: 50px;
 }
